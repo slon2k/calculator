@@ -7,25 +7,37 @@ export default class App extends React.Component {
 
     state = {
         num1: "0",
-        num2: "0",
-        operation: ''
+        num2: 0,
+        operation: '',
+        dotUsed: false,
+        editing: false
     }
 
     addDigit(d) {
-        const {num1} = this.state;
-        const newValue = `${num1}${d}`
-        this.setState({num1: newValue})
+        const {num1, editing} = this.state;
+        if (editing === false) {
+            this.setState({editing: true, num1: `${d}`})
+        } else {
+            this.setState({num1: `${num1}${d}`, editing: true})
+        }
     }
 
     clear() {
-        this.setState({num1: "0"})
+        this.setState({num1: '0', editing: false})
     }
 
     operation(op) {
         const {num1, num2, operation} = this.state
-        this.setState({operation: op})
-        this.setState({num2: num1})
-        this.setState({num1: "0"})
+        this.setState({operation: op, num2: parseFloat(num1), editing: false})
+    }
+
+    dot() {
+        const {num1, editing, dotUsed} = this.state;
+        if (editing === true && dotUsed === false) {
+            this.setState({num1: `${num1}${'.'}`, dotUsed: true})
+        } else if (editing === false) {
+            this.setState({dotUsed: true, num1: `0.`, editing: true})
+        }
 
     }
 
@@ -34,14 +46,14 @@ export default class App extends React.Component {
         let result = 0;
 
         switch(operation){
-            case '+': result = parseFloat(num1) + parseFloat(num2); break
-            case '-': result = parseFloat(num1) - parseFloat(num2); break
-            case '*': result = parseFloat(num1) * parseFloat(num2); break
-            case '/': result = parseFloat(num2) === 0 ? "Error" : parseFloat(num1) / parseFloat(num2); break
+            case '+': result = parseFloat(num1) + num2; break
+            case '-': result = num2 - parseFloat(num1); break
+            case '*': result = parseFloat(num1) * num2; break
+            case '/': result = parseFloat(num1) === 0 ? "Error" : num2 / parseFloat(num1); break
             default : break
         }
 
-        this.setState({num1: result})
+        this.setState({num1: result, editing: false})
 
     }
 
@@ -69,7 +81,7 @@ export default class App extends React.Component {
                     <button onClick={() => this.addDigit(7)}>7</button>
                     <button onClick={() => this.addDigit(8)}>8</button>
                     <button onClick={() => this.addDigit(9)}>9</button>
-                    <button onClick={() => this.addDigit(".")}>.</button>
+                    <button onClick={() => this.dot()}>.</button>
                 </div>
                 <div>
                     <button onClick={() => this.clear()}>C</button>

@@ -3,7 +3,7 @@ import React from 'react'
 const Display = ({num}) => {
     return (
         <div>
-            <h3>{(num)}</h3>
+            <h3>{num === 'Error' ? num : parseFloat(num)}</h3>
         </div>
     )
 }
